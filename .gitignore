@@ -1,0 +1,32 @@
+# ASP.NET Core
+bin/
+obj/
+Configuration/.env/
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains Rider
+.idea/
+
+# Packages
+*.nupkg
+project.lock.json
+npm-debug.log
+yarn-error.log
+
+# .NET Core
+project.assets.json
+
+# Windows generated files
+Thumbs.db
+Desktop.ini
+
+# Mac generated files
+.DS_Store
+
+# Visual Studio files
+*.vscode/
+*.suo
+*.user
+*.sln.docstates
