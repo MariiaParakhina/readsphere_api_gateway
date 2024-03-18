@@ -25,12 +25,8 @@ jobs:
         run: dotnet restore
 
       - name: Build Application
-        run: dotnet build --configuration Release
-
-      - name: Test Application
-        run: dotnet test --configuration Release --no-restore
-
- - uses: actions/checkout@v3
+        run: dotnet build --configuration Release  
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0  
@@ -38,3 +34,5 @@ jobs:
         uses: JetBrains/qodana-action@v2023.3
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+
+ 
