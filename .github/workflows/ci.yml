@@ -25,14 +25,12 @@ jobs:
 
       - name: Build Application
         run: dotnet build --configuration Release  
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0  
+
       - name: Test Application
-        run: 
-          - dotnet test --configuration Release --no-restore
-          - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        run: |
+          dotnet test --configuration Release --no-restore && \
+          dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2023.3
         env:
