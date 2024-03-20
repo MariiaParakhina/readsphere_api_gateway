@@ -37,7 +37,7 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: MariiaParakhina/readsphere_book_microservice  
+          slug: MariiaParakhina/readsphere_api_gateway  
       - name: Run Qodana Scan
         uses: JetBrains/qodana-action@v2023.3
         env:
