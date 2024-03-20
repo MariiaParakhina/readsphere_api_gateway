@@ -30,15 +30,17 @@ jobs:
 
       - name: Build Application
         run: dotnet build --configuration Release  
-
       - name: Build and Test with Code Coverage
         run: |
-          dotnet test --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
-          codecov
+          dotnet test --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura        
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: MariiaParakhina/readsphere_book_microservice  
+      - name: Run Qodana Scan
+        uses: JetBrains/qodana-action@v2023.3
         env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
 
-      - name: Generate Coverage Report
-        run: |
-          reportgenerator "-reports:Test.Core/coverage.cobertura.xml" "-targetdir:coverage_report" "-reporttypes:Html"
- 
+     
