@@ -28,10 +28,16 @@ jobs:
 
       - name: Test Application
         run: |
-          dotnet test --configuration Release --no-restore && \
-          dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+          dotnet test --configuration Release --no-restore 
 
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2023.3
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+          
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: MariiaParakhina/readsphere_api_gateway
+
