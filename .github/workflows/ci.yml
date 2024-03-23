@@ -48,6 +48,7 @@ jobs:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
       
       - name: Build image
+        working-directory: ./
         run: docker build -f ./API_Gateway/Dockerfile -t api-gateway ./API_Gateway/
 
       - name: Trigger Main Repository Workflow
