@@ -49,7 +49,7 @@ jobs:
       
       - name: Build image
         working-directory: ./
-        run: docker build -f ./API_Gateway/Dockerfile -t api-gateway ./API_Gateway/
+        run: docker build -f ./Dockerfile -t api-gateway ./
 
       - name: Trigger Main Repository Workflow
         uses: actions/github-script@v4
