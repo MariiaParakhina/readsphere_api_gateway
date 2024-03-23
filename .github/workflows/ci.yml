@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,6 +12,7 @@ jobs:
       contents: write
       pull-requests: write
       checks: write
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -20,24 +22,43 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Install ReportGenerator
+        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
       - name: Restore Dependencies
         run: dotnet restore
 
       - name: Build Application
         run: dotnet build --configuration Release  
 
-      - name: Test Application
+      - name: Build and Test with Code Coverage
         run: |
-          dotnet test --configuration Release --no-restore 
-
-      - name: 'Qodana Scan'
-        uses: JetBrains/qodana-action@v2023.3
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
-          
+          dotnet test --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura        
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: MariiaParakhina/readsphere_api_gateway
+          slug: MariiaParakhina/readsphere_book_microservice  
 
+
+      - name: Run Qodana Scan
+        uses: JetBrains/qodana-action@v2023.3
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+      
+      - name: Build image
+        run: docker build -f ./API_Gateway/Dockerfile -t api-gateway ./API_Gateway/
+
+      - name: Trigger Main Repository Workflow
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const response = await octokit.request('POST /repos/MariiaParakhina/readsphere/actions/workflows/ci.yaml/dispatches', {
+              owner: 'MariiaParakhina',
+              repo: 'readsphere',
+              workflow_id: 'ci.yaml',
+              ref: 'main',
+            }); 
+
+     
