@@ -3,9 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main 
-  repository_dispatch:
-    types: [trigger-ci]
+      - main  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -52,12 +50,13 @@ jobs:
         working-directory: ./
         run: docker build -f ./Dockerfile -t api-gateway ./
 
-      - name: Trigger CI Workflow
-        uses: peter-evans/repository-dispatch@v1
+      - name: Trigger Workflow in Another Repo
+        uses: henrywhitaker3/trigger-external-workflow-action@v1
         with:
           token: ${{ secrets.G_ACCESS_TOKEN }}
-          repository: MariiaParakhina/readshpere
-          event-type: ci_trigger
+          owner: MariiaParakhina
+          repo: readsphere
+          workflow: .github/workflows/ci.yml
 
       
  
