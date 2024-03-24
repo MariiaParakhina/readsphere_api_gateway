@@ -50,15 +50,16 @@ jobs:
         working-directory: ./
         run: docker build -f ./Dockerfile -t api-gateway ./
 
-      - name: Trigger Workflow in Another Repo
-        uses: henrywhitaker3/trigger-external-workflow-action@v1
-        with:
-          token: ${{ secrets.G_ACCESS_TOKEN }}
-          owner: MariiaParakhina
-          repo: readsphere
-          workflow: .github/workflows/ci.yml
-
-      
+  trigger:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Trigger Workflow in ReadSphere
+          uses: benc-uk/workflow-dispatch@v1
+          with:
+            workflow: Main Workflow
+            token: ${{ secrets.Q_ACCESS_TOKEN }}
+            repo: MariiaParakhina/readsphere
+            type: deploy-event
  
       
  
