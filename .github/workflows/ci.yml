@@ -55,10 +55,10 @@ jobs:
     steps:
       - name: test
         run: |
-        curl -X GET \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization:  Bearer ${{ secrets.G_ACCESS_TOKEN }}" \
-          https://api.github.com/repos/MariiaParakhina/readsphere/actions/workflows
+          curl -X GET \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization:  Bearer ${{ secrets.G_ACCESS_TOKEN }}" \
+            https://api.github.com/repos/MariiaParakhina/readsphere/actions/workflows
       - name: Trigger Workflow
         run: |
           curl -L \
