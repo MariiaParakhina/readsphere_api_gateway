@@ -5,71 +5,73 @@ on:
     branches:
       - main  
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: write
-  #     pull-requests: write
-  #     checks: write
-
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v2
-
-  #     - name: Setup .NET SDK
-  #       uses: actions/setup-dotnet@v1
-  #       with:
-  #         dotnet-version: '8.x'
-
-  #     - name: Install ReportGenerator
-  #       run: dotnet tool install -g dotnet-reportgenerator-globaltool
-
-  #     - name: Restore Dependencies
-  #       run: dotnet restore
-
-  #     - name: Build Application
-  #       run: dotnet build --configuration Release      
-  # test:
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   permissions:
-  #     contents: write
-  #     pull-requests: write
-  #     checks: write
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v2
-  #     - name: Build and Test with Code Coverage
-  #       run: |
-  #         dotnet test --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura        
-  #     - name: Upload coverage reports to Codecov
-  #       uses: codecov/codecov-action@v4.0.1
-  #       with:
-  #         token: ${{ secrets.CODECOV_TOKEN }}
-  #         slug: MariiaParakhina/readsphere_book_microservice  
-  #     - name: Run Qodana Scan
-  #       uses: JetBrains/qodana-action@v2023.3
-  #       env:
-  #         QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
-
-  trigger_deploy:
+  build:
     runs-on: ubuntu-latest
-    # needs: test
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.x'
+
+      - name: Install ReportGenerator
+        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Application
+        run: dotnet build --configuration Release      
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Build and Test with Code Coverage
+        run: |
+          dotnet test --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura        
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: MariiaParakhina/readsphere_book_microservice  
+      - name: Run Qodana Scan
+        uses: JetBrains/qodana-action@v2023.3
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+       - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Build image
         working-directory: ./
-        run: docker build -f Dockerfile -t api-gateway:latest .
-      - name: check
-        run: docker images
+        run: docker build -f Dockerfile -t api-gateway:latest .   
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u mariia5345 --password-stdin
-
       - name: Push image to Docker Hub
         run: |
           docker tag docker.io/library/api-gateway:latest mariia5345/api-gateway:latest
           docker push mariia5345/api-gateway:latest
+  trigger_deploy:
+    runs-on: ubuntu-latest
+    needs: docker
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2      
       - name: Trigger Workflow
         run: |
             curl -X POST \
