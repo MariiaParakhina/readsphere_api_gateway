@@ -50,24 +50,21 @@ jobs:
         working-directory: ./
         run: docker build -f ./Dockerfile -t api-gateway ./
 
+  
   trigger:
-      runs-on: ubuntu-latest
-      steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    runs-on: ubuntu-latest
+    steps:
       - name: Trigger Workflow
-        uses: repo-sync/pull-request@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          repository: MariiaParakhina/readshpere
-          event_type: ci_trigger
-          script: |
-            const response = await octokit.request('POST /repos/MariiaParakhina/readsphere/actions/workflows/ci.yaml/dispatches', {
-              owner: 'MariiaParakhina',
-              repo: 'readsphere',
-              workflow_id: 'ci.yaml',
-              ref: 'main',
-            }); 
+        run: |
+          const response = await octokit.request('POST /repos/MariiaParakhina/readsphere/actions/workflows/ci.yaml/dispatches', {
+            owner: 'MariiaParakhina',
+            repo: 'readsphere',
+            workflow_id: 'ci.yaml',
+            ref: 'main',
+          });
+        env:
+          GITHUB_TOKEN: ${{ secrets.G_ACCESS_TOKEN }}
+
  
       
  
