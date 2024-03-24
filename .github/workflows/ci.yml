@@ -56,12 +56,10 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const response = await octokit.request('POST /repos/MariiaParakhina/readsphere/actions/workflows/ci.yaml/dispatches', {
+            const response = await github.request('GET /repos/MariiaParakhina/readshpere/actions/runs', {
               owner: 'MariiaParakhina',
-              repo: 'readsphere',
-              workflow_id: 'ci.yaml',
-              ref: 'main',
-            }); 
+              repo: 'readshpere'
+            });
 
       
  
