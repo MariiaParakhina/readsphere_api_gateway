@@ -53,7 +53,8 @@ jobs:
   trigger:
       runs-on: ubuntu-latest
       steps:
-        
+      - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Trigger Workflow
         uses: repo-sync/pull-request@v2
         with:
