@@ -60,7 +60,12 @@ jobs:
         uses: actions/checkout@v2
       - name: Build image
         working-directory: ./
-        run: docker build -f ./Dockerfile -t api-gateway ./    
+        run: docker build -f ./Dockerfile -t api-gateway ./   
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u Mariia5345 --password-stdin
+
+      - name: Push image to Docker Hub
+        run: docker push Mariia5345/api-gateway 
       - name: Trigger Workflow
         run: |
             curl -X POST \
