@@ -67,7 +67,7 @@ jobs:
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u mariia5345 --password-stdin
 
       - name: Push image to Docker Hub
-        run: docker push mariia5345/api-gateway:latest
+        run: docker push docker.io/library/mariia5345/api-gateway:latest
       - name: Trigger Workflow
         run: |
             curl -X POST \
