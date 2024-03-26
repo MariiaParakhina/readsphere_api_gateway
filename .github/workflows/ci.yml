@@ -60,7 +60,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Build image
-      working-directory: ./
+        working-directory: ./
       run: |
         docker build -f Dockerfile -t api-gateway . 
         docker tag api-gateway gcr.io/readsphere/api-gateway 
