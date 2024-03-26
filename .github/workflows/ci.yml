@@ -68,6 +68,8 @@ jobs:
         uses: google-github-actions/auth@v0.6.0
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: set up google SDK
+        uses: google-github-actions/setup-gcloud@v1
       - name: Build image
         working-directory: ./
         run: docker push gcr.io/readsphere/api-gateway
