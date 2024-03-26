@@ -57,32 +57,26 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0.3.0
+      - name: Login to GCR
+        uses: docker/login-action@v2
         with:
-          version: '333.0.0'
-          project_id: readsphere
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-          export_default_credentials: true
-      - name: Build and Push Docker Image
+          username: _json_key
+          password: ${{ secrets.GCR_SERVICE_ACCOUNT_KEY }}
+          registry: gcr.io
+      - name: Build
+        working-directory: ./
         run: |
-          gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/api-gateway .
-        env:
-          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ secrets.GCP_CREDENTIALS }}
-      # - name: Build
-      #   working-directory: ./
-      #   run: |
-      #     docker build -f Dockerfile -t api-gateway . 
-      #     docker tag api-gateway gcr.io/readsphere/api-gateway 
+          docker build -f Dockerfile -t api-gateway . 
+          docker tag api-gateway gcr.io/readsphere/api-gateway 
       # - name: Authenticate to Google Cloud
       #   uses: google-github-actions/auth@v0.6.0
       #   with:
       #     credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       # - name: set up google SDK
       #   uses: google-github-actions/setup-gcloud@v1
-      # - name: Build image
-      #   working-directory: ./
-      #   run: docker push  gcr.io/readsphere/api-gateway   
+      - name: Build image
+        working-directory: ./
+        run: docker push  gcr.io/readsphere/api-gateway   
         
 
       # - name: Log in to Docker Hub
