@@ -5,14 +5,14 @@ on:
     branches:
       - main  
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      checks: write
+  # build:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write
+  #     pull-requests: write
+  #     checks: write
 
-    steps:
+  #   steps:
   #     - name: Checkout Repository
   #       uses: actions/checkout@v2
 
