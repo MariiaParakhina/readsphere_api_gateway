@@ -63,7 +63,7 @@ jobs:
         working-directory: ./
         run: |
           docker build -f Dockerfile -t api-gateway . 
-          docker tag api-gateway readsphere/api-gateway 
+          docker tag api-gateway gcr.io/readsphere/api-gateway 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0.6.0
         with:
@@ -72,7 +72,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
       - name: Build image
         working-directory: ./
-        run: docker push readsphere/api-gateway
+        run: docker push  gcr.io/readsphere/api-gateway   
 
       # - name: Log in to Docker Hub
       #   run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u mariia5345 --password-stdin
