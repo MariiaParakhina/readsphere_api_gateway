@@ -78,8 +78,9 @@ jobs:
           GOOGLE_PROJECT: readsphere
         run: |
           gcloud auth configure-docker us-docker.pkg.dev
-          docker build -t us-docker.pkg.dev/readsphere/readsphere/api-gateway:latest .
-          docker push us-docker.pkg.dev/readsphere/readsphere/api-gateway:latest
+          docker build -t gcr.io/readsphere/my-repo .
+          gcloud artifacts repositories create gcr.io/readsphere/my-repo --repository-format=docker --location=us
+          docker push gcr.io/readsphere/my-repo .
      
   deploy:
     runs-on: ubuntu-latest
