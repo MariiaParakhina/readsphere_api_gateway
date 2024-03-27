@@ -78,8 +78,8 @@ jobs:
           GOOGLE_PROJECT: readsphere
         run: |
           gcloud auth configure-docker us-docker.pkg.dev
-          docker build -t us-docker.pkg.dev/readsphere/api-gateway:latest .
-          docker push us-docker.pkg.dev/readsphere/api-gateway:latest
+          docker build -t us-docker.pkg.dev/readsphere/readsphere/api-gateway:latest .
+          docker push us-docker.pkg.dev/readsphere/readsphere/api-gateway:latest
      
   deploy:
     runs-on: ubuntu-latest
