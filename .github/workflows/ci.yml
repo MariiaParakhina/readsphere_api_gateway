@@ -73,13 +73,13 @@ jobs:
       #     project_id: readsphere
       #     service_account_key: ${{ secrets.GCP_CREDENTIALS }}
       #     export_default_credentials: true
-      # - name: build and push
-      #   env:
-      #     GOOGLE_PROJECT: readsphere
-      #   run: |
-      #     gcloud auth configure-docker us-docker.pkg.dev
-      #     docker build -t us-docker.pkg.dev/readsphere/api-gateway:latest .
-      #     docker push us-docker.pkg.dev/readsphere/api-gateway:latest
+      - name: build and push
+        env:
+          GOOGLE_PROJECT: readsphere
+        run: |
+          gcloud auth configure-docker us-docker.pkg.dev
+          docker build -t us-docker.pkg.dev/readsphere/api-gateway:latest .
+          docker push us-docker.pkg.dev/readsphere/api-gateway:latest
      
   deploy:
     runs-on: ubuntu-latest
