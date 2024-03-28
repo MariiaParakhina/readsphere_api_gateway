@@ -76,11 +76,10 @@ jobs:
       - name: build and push
         env:
           GOOGLE_PROJECT: readsphere
-        run: |
-          gcloud auth configure-docker us-docker.pkg.dev
-          docker build -t my-repo .
-          gcloud artifacts repositories create my-repo --repository-format=docker --location=us
-          docker push my-repo .
+        run: |         
+          docker build -t us-central1-docker.pkg.dev/readsphere/api-gateway  .
+          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev            
+          docker push us-central1-docker.pkg.dev/readsphere/api-gateway .
      
   deploy:
     runs-on: ubuntu-latest
