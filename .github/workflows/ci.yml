@@ -79,7 +79,7 @@ jobs:
         run: |         
           docker build -t us-central1-docker.pkg.dev/readsphere/api-gateway  .
           gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev            
-          docker push us-central1-docker.pkg.dev/readsphere/api-gateway .
+          docker push us-central1-docker.pkg.dev/readsphere/api-gateway
      
   deploy:
     runs-on: ubuntu-latest
