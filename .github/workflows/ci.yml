@@ -97,7 +97,7 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
-          gcloud run deploy readsphere-api-gateway --image us-central1-docker.pkg.dev/readsphere/api-gateway/api-gateway --region us-central1
+          # gcloud run deploy readsphere-api-gateway --image us-central1-docker.pkg.dev/readsphere/api-gateway/api-gateway --region us-central1
         
       # - name: Trigger Workflow
       #   run: |
