@@ -1,4 +1,4 @@
-ioname: CI
+name: CI
 
 on:
   push:
