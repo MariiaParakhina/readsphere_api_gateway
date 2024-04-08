@@ -62,7 +62,7 @@ jobs:
           run: docker build -t book-api:latest .
   
         - name: Run Docker Container
-          run: docker run -d -p 8080:80 --name book-api book-api:latest
+          run: docker run -d -p 64212:64212 --name book-api book-api:latest
      
   # deploy:
   #   runs-on: ubuntu-latest
