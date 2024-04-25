@@ -57,11 +57,11 @@ jobs:
         - name: Checkout Repository
           uses: actions/checkout@v2            
         - name: Build Docker Image
-          run:  docker build -t ${{ secrets.CI_REGISTRY_IMAGE}} . 
+          run:  docker build -t api_gateway_api . 
         - name: Login to the account
           run:  echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u mariia5345 --password-stdin
         - name: Push Docker Image
-          run: docker push mariia5345/${{ secrets.CI_REGISTRY_IMAGE}}:latest 
+          run: docker push mariia5345/api_gateway_api:latest 
      
   # deploy:
   #   runs-on: ubuntu-latest
