@@ -61,7 +61,7 @@ jobs:
         - name: Login to the account
           run:  echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u mariia5345 --password-stdin
         - name: Push Docker Image
-          run: docker push ${{ secrets.CI_REGISTRY_IMAGE}}:latest 
+          run: docker push mariia5345/${{ secrets.CI_REGISTRY_IMAGE}}:latest 
      
   # deploy:
   #   runs-on: ubuntu-latest
