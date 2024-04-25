@@ -56,12 +56,13 @@ jobs:
     steps:
         - name: Checkout Repository
           uses: actions/checkout@v2
-  
+        - name: Login to the account
+          run:  echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u mariia5345 --password-stdin
+            
         - name: Build Docker Image
-          run: |
-              echo "${{ secrets.DOCKER_HUB }}" | docker login -u mariia5345 --password-stdin
-              docker build -t ${{ secrets.CI_REGISTRY_IMAGE}}:latest .
-              docker push ${{ secrets.CI_REGISTRY_IMAGE}}:latest 
+          run:  docker build -t ${{ secrets.CI_REGISTRY_IMAGE}}:latest . 
+        - name: Push Docker Image
+          run: docker push ${{ secrets.CI_REGISTRY_IMAGE}}:latest 
      
   # deploy:
   #   runs-on: ubuntu-latest
