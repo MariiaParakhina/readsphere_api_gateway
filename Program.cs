@@ -73,10 +73,10 @@ app.Use(async (context, next) =>
     {
         // Validate the token
         var jwtToken = jwtHandler.ReadJwtToken(token);
-        var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "unique_name");
-
-        var userId = userIdClaim.Value;
-        context.Request.Headers.Add("X-User-Id", userId); 
+        
+        var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "nameid");
+        var userId = userIdClaim?.Value;
+        context.Request.Headers.Append("X-User-Id", userId); 
          
     }
     catch (Exception ex)
