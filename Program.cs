@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Certificate;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,14 +12,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
-builder.WebHost.ConfigureKestrel((context, options) =>
+/*builder.WebHost.ConfigureKestrel((context, options) =>
 {
     var certPath = "./cert/certificate.pfx";
     options.ListenAnyIP(64212, listenOptions =>
     {
         listenOptions.UseHttps(certPath, "pass");
+       
     });
-});
+});*/
 
 // Configure certificate authentication
 builder.Services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
@@ -32,17 +34,34 @@ builder.Services.AddAuthentication(CertificateAuthenticationDefaults.Authenticat
             }
         };
     });
-builder.Services.AddCors((options) =>
+builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        corsPolicyBuilder =>
-        {
-            corsPolicyBuilder.WithOrigins("*")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowLocalhost3000", corsPolicyBuilder =>
+    {
+        corsPolicyBuilder.WithOrigins("http://localhost:3000")
+            .WithHeaders("Authorization", "Content-Type")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
+    });
 });
+
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.Headers.Add("Access-Control-Allow-Origin", new[] { (string)context.Request.Headers["Origin"] });
+        context.Response.Headers.Add("Access-Control-Allow-Headers", new[] { "Origin, X-Requested-With, Content-Type, Accept, Authorization" });
+        context.Response.Headers.Add("Access-Control-Allow-Methods", new[] { "GET, POST, PUT, DELETE, OPTIONS" });
+        context.Response.Headers.Add("Access-Control-Allow-Credentials", new[] { "true" });
+        context.Response.StatusCode = 200;
+        return;
+    }
+
+    await next();
+});
 app.Use(async (context, next) =>
 {
     // Skip for paths that don't require authentication
@@ -55,14 +74,20 @@ app.Use(async (context, next) =>
 
     var jwtHandler = new JwtSecurityTokenHandler();
     var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-
+     Console.WriteLine($"{context.Request.Headers["Authorization"].IsNullOrEmpty()}");
+     Console.WriteLine($"{context.Request.Headers["Authorization"]}");
+    
+     
+    
+    Console.WriteLine($"Token: {token}" );
     // Check if token is present
     if (string.IsNullOrEmpty(token))
     {
+        
         string authorizationHeader = context.Request.Headers["Authorization"].ToString();
- 
+
         byte[] byteArray = Encoding.UTF8.GetBytes(authorizationHeader);
- 
+
         Stream stream = new MemoryStream(byteArray);
         context.Response.StatusCode = 401; // Unauthorized
         context.Response.Body = stream;
@@ -81,7 +106,7 @@ app.Use(async (context, next) =>
     }
     catch (Exception ex)
     {
-        context.Response.StatusCode = 401;  
+        context.Response.StatusCode = 500;  
         await context.Response.WriteAsync(ex.Message);
         return;
     }
@@ -94,7 +119,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowLocalhost3000");
+app.UseAuthentication();
+app.UseAuthorization();
 // app.UseHttpsRedirection();  
 // app.UseHsts(); 
 app.MapReverseProxy();
