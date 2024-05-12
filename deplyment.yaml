@@ -14,6 +14,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image:  mariia5345/api_gateway_api
+          image:  mariia5345/api_gateway_api:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 64212
