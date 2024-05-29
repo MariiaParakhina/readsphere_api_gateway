@@ -50,7 +50,8 @@ app.Use(async (context, next) =>
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.StartsWithSegments("/api/auth/login") ||
-        context.Request.Path.StartsWithSegments("/api/Account/register"))
+        context.Request.Path.StartsWithSegments("/api/Account/register") ||
+        context.Request.Path.StartsWithSegments("/"))
     {
         await next();
         return;
