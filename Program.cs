@@ -3,12 +3,33 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+
+#region Monitoring
+builder.Services.AddOpenTelemetry().WithMetrics(opts =>
+{
+    opts.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("API_Gateway"))
+        .AddMeter("api-gateway")
+        .AddAspNetCoreInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddProcessInstrumentation()
+        .AddOtlpExporter(otlpOpts =>
+        {
+                      
+            otlpOpts.Endpoint = new Uri(Environment.GetEnvironmentVariable("PROMETHEUS_URL"));
+        })
+        .AddPrometheusExporter();
+});
+#endregion
+
 
 builder.Services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
     .AddCertificate(options =>
@@ -51,6 +72,7 @@ app.Use(async (context, next) =>
 {
     if (context.Request.Path.StartsWithSegments("/api/auth/login") ||
         context.Request.Path.StartsWithSegments("/api/Account/register") ||
+        context.Request.Path.StartsWithSegments("/metrics") ||
         context.Request.Path.StartsWithSegments("/"))
     {
         await next();
@@ -100,5 +122,6 @@ app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapReverseProxy();
-
+app.MapControllers();
+app.MapMetrics();
 app.Run();
