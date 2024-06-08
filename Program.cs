@@ -13,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
-
+Console.WriteLine("Prometheus:   "+  Environment.GetEnvironmentVariable("PROMETHEUS_URL"));
 #region Monitoring
 builder.Services.AddOpenTelemetry().WithMetrics(opts =>
 {
@@ -47,7 +47,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        builder.WithOrigins("http://192.168.0.108:3000")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -122,6 +122,14 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; object-src:'none'");
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+
+    await next();
+});
 app.MapReverseProxy();
 app.MapControllers();
 app.MapMetrics();
